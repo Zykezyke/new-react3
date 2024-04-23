@@ -27,18 +27,21 @@ const tempPlaylist = [
     title: "Song 1",
     artist: "Artist A",
     genre: "Pop",
+    rating: 4,
   },
   {
     id: 2,
     title: "Song 2",
     artist: "Artist B",
     genre: "Rock",
+    rating: 3,
   },
   {
     id: 3,
     title: "Song 3",
     artist: "Artist C",
     genre: "Jazz",
+    rating: 5,
   },
 ];
 
@@ -89,12 +92,9 @@ function Search() {
 
 function Box({ title, children }) {
   return (
-    <div>
-      {" "}
-      <div className="container">
-        <h2>{title}</h2>
-        {children}
-      </div>
+    <div className="container">
+      <h2>{title}</h2>
+      {children}
     </div>
   );
 }
@@ -130,6 +130,10 @@ function Playlist() {
       {playlist.map((music) => (
         <li key={music.id}>
           {music.title} by {music.artist}
+          <p>
+            <span>⭐</span>
+            <span>{music.rating}</span>
+          </p>
         </li>
       ))}
     </ul>
@@ -152,7 +156,6 @@ function App() {
         <NumResult music={music} />
       </NavigationBar>
       <Main>
-        {" "}
         <Box title={"Music List"}>
           <Music music={music} />
         </Box>
