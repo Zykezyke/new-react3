@@ -1,49 +1,28 @@
 import logo from "./logo.svg";
 import "./App.css";
 import { useState } from "react";
-const tempMusicData = [
-  {
-    id: 1,
-    title: "Song 1",
-    artist: "Artist A",
-    genre: "Pop",
-  },
-  {
-    id: 2,
-    title: "Song 2",
-    artist: "Artist B",
-    genre: "Rock",
-  },
-  {
-    id: 3,
-    title: "Song 3",
-    artist: "Artist C",
-    genre: "Jazz",
-  },
-];
-const tempPlaylist = [
-  {
-    id: 1,
-    title: "Song 1",
-    artist: "Artist A",
-    genre: "Pop",
-    rating: 4,
-  },
-  {
-    id: 2,
-    title: "Song 2",
-    artist: "Artist B",
-    genre: "Rock",
-    rating: 3,
-  },
-  {
-    id: 3,
-    title: "Song 3",
-    artist: "Artist C",
-    genre: "Jazz",
-    rating: 5,
-  },
-];
+
+const CLIENT_ID = "5bb4c5ead3324edb94176fc8dd9290c1";
+const CLIENT_SECRET = "f488baf24f1e4fdbae548c9f65da83e0";
+
+function App() {
+  const [music, setMusic] = useState([]);
+  return (
+    <div>
+      <NavigationBar>
+        <NumResult music={music} />
+      </NavigationBar>
+      <Main>
+        <Box title={"Music List"}>
+          <Music music={music} />
+        </Box>
+        <Box title={"Playlist"}>
+          <Playlist />
+        </Box>
+      </Main>
+    </div>
+  );
+}
 
 function NavigationBar({ children }) {
   return (
@@ -70,11 +49,37 @@ function NumResult({ music }) {
 
 function Search() {
   const [query, setQuery] = useState("");
+  const [accessToken, setAccessToken] = useState("");
+
+  var authParameter = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body:
+      "grant_type=client_credentials&client_id=" +
+      CLIENT_ID +
+      "&client_secret=" +
+      CLIENT_SECRET,
+  };
+  fetch("https://accounts.spotify.com/api/token", authParameter).then(
+    (result) => result.json().then((data) => console.log(data.access_token))
+  );
+
+  async function search() {
+    console.log("Searching for " + query);
+  }
+
   return (
     <input
       className="search"
       type="text"
       placeholder="Search music..."
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          search();
+        }
+      }}
       value={query}
       onChange={(e) => setQuery(e.target.value)}
     />
@@ -121,7 +126,7 @@ function Music({ music }) {
 // }
 
 function Playlist() {
-  const [playlist, setPlaylist] = useState(tempPlaylist);
+  const [playlist, setPlaylist] = useState([]);
   const addToPlaylist = (music) => {
     setPlaylist([...playlist, music]);
   };
@@ -145,24 +150,6 @@ function Main({ children }) {
     <div>
       <div className="container"></div>
       <div className="container">{children}</div>
-    </div>
-  );
-}
-function App() {
-  const [music, setMusic] = useState(tempMusicData);
-  return (
-    <div>
-      <NavigationBar>
-        <NumResult music={music} />
-      </NavigationBar>
-      <Main>
-        <Box title={"Music List"}>
-          <Music music={music} />
-        </Box>
-        <Box title={"Playlist"}>
-          <Playlist />
-        </Box>
-      </Main>
     </div>
   );
 }
